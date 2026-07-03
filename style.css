@@ -1,0 +1,870 @@
+/* =========================================================================
+   BAGAS VITORO — PORTFOLIO
+   Design language: industrial control-panel / equipment nameplate.
+   Built for readability on a DIN-rail terminal strip aesthetic.
+   ========================================================================= */
+
+/* ---------- Design tokens ---------- */
+:root {
+  /* Color */
+  --bg: #12161b;
+  --surface: #1a2027;
+  --surface-2: #212a33;
+  --line: #2c3541;
+  --line-soft: #232b34;
+  --text: #eae6dc;
+  --text-dim: #8c97a3;
+  --text-faint: #5b6570;
+  --amber: #f2a93b;
+  --amber-dim: #c98a2c;
+  --teal: #4fd1c2;
+  --red: #e2694b;
+
+  /* Type */
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  /* Layout */
+  --max-w: 1120px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --radius: 3px;
+  --radius-lg: 6px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- Reset ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Subtle blueprint grid behind everything */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.35;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 75%);
+}
+
+img { display: block; max-width: 100%; }
+
+a { color: inherit; text-decoration: none; }
+
+ul { list-style: none; }
+
+button { font: inherit; cursor: pointer; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.container {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Visually-hidden but available to assistive tech */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Keyboard focus is always visible */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================================
+   Eyebrow / mono labels — the "nameplate stamp" typographic voice
+   ========================================================================= */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 20%, transparent);
+}
+
+/* =========================================================================
+   Header / nav — reads like a panel's ID strip
+   ========================================================================= */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.nav-brand strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0;
+}
+
+.nav-brand span {
+  color: var(--text-faint);
+  font-size: 0.75rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nav-links a {
+  position: relative;
+  color: var(--text-dim);
+  padding: 0.25rem 0;
+  transition: color 0.2s var(--ease);
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 100%;
+  bottom: -2px;
+  height: 1px;
+  background: var(--amber);
+  transition: right 0.25s var(--ease);
+}
+
+.nav-links a:hover,
+.nav-links a.is-active {
+  color: var(--text);
+}
+
+.nav-links a.is-active::after,
+.nav-links a:hover::after {
+  right: 0;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px;
+}
+
+.nav-toggle span {
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
+}
+
+/* =========================================================================
+   Hero — equipment nameplate
+   ========================================================================= */
+.hero {
+  padding: clamp(3rem, 8vw, 6rem) 0 clamp(2.5rem, 6vw, 4rem);
+}
+
+.nameplate {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: clamp(2rem, 5vw, 3.5rem);
+  align-items: center;
+}
+
+.nameplate-copy .eyebrow { margin-bottom: 1.25rem; }
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  color: var(--text);
+}
+
+.hero-title .accent { color: var(--amber); }
+
+.hero-role {
+  margin-top: 0.9rem;
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  color: var(--text-dim);
+  max-width: 42ch;
+}
+
+.hero-lede {
+  margin-top: 1.25rem;
+  max-width: 54ch;
+  color: var(--text-dim);
+  font-size: 0.98rem;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 2rem;
+}
+
+/* Panel push-buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  transition: transform 0.15s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--amber);
+  color: #1a1204;
+  border-color: var(--amber);
+  font-weight: 600;
+}
+
+.btn-primary:hover { background: #f7b756; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+}
+
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+
+/* Nameplate spec table — the datasheet strip beneath the headline */
+.spec-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-top: 2.5rem;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.spec-cell {
+  background: var(--surface);
+  padding: 0.9rem 1.1rem;
+}
+
+.spec-cell dt {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.spec-cell dd {
+  margin-top: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--teal);
+}
+
+/* Portrait — framed like an ID badge on a panel */
+.badge-frame {
+  position: relative;
+  justify-self: center;
+  width: min(280px, 80%);
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 10px;
+}
+
+.badge-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  filter: grayscale(0.15) contrast(1.03);
+}
+
+.badge-tag {
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  transform: translateX(-50%);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* =========================================================================
+   Terminal-strip section divider — the signature connective device
+   ========================================================================= */
+.terminal-strip {
+  position: relative;
+  height: 40px;
+  margin-inline: auto;
+  max-width: var(--max-w);
+  padding-inline: var(--gutter);
+}
+
+.terminal-strip::before {
+  content: "";
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  top: 50%;
+  height: 1px;
+  background: var(--line);
+}
+
+.terminal-strip .terminals {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.terminal-strip .terminals span {
+  width: 9px;
+  height: 9px;
+  margin-top: 15px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+/* =========================================================================
+   Section shell
+   ========================================================================= */
+.section {
+  padding: clamp(3rem, 7vw, 5rem) 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+}
+
+.section-note {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
+}
+
+/* =========================================================================
+   About
+   ========================================================================= */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+.about-body p {
+  color: var(--text-dim);
+  max-width: 60ch;
+}
+
+.about-body p + p { margin-top: 1rem; }
+
+.lang-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.5rem;
+}
+
+.lang-panel h3 {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 1rem;
+}
+
+.lang-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--line-soft);
+  font-size: 0.9rem;
+}
+
+.lang-row:first-of-type { border-top: none; }
+
+.lang-meter {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.lang-meter i {
+  width: 12px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.lang-meter i.filled { background: var(--teal); }
+
+/* =========================================================================
+   Timeline (Education + Experience, chronological — numbering is earned)
+   ========================================================================= */
+.timeline {
+  position: relative;
+  padding-left: 2.6rem;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.95rem;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 1px;
+  background: var(--line);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 2.2rem;
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-marker {
+  position: absolute;
+  left: -2.6rem;
+  top: 0.15rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--amber);
+}
+
+.timeline-item[data-kind="edu"] .timeline-marker { color: var(--teal); }
+
+.timeline-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem 1.4rem;
+}
+
+.timeline-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.tag {
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.tag.tag-work { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 40%, var(--line)); }
+.tag.tag-edu { color: var(--teal); border-color: color-mix(in srgb, var(--teal) 40%, var(--line)); }
+
+.timeline-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.15rem;
+}
+
+.timeline-org {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  margin-bottom: 0.7rem;
+}
+
+.timeline-card ul {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.timeline-card li {
+  position: relative;
+  padding-left: 1.1rem;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+
+.timeline-card li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 1px;
+  background: var(--text-faint);
+}
+
+/* =========================================================================
+   Projects — spec-sheet cards
+   ========================================================================= */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.4rem;
+}
+
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.project-card:hover {
+  border-color: color-mix(in srgb, var(--amber) 45%, var(--line));
+  transform: translateY(-2px);
+}
+
+.project-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.project-head h3 {
+  font-size: 1.08rem;
+  max-width: 30ch;
+}
+
+.project-tag {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--teal);
+  white-space: nowrap;
+}
+
+.project-desc {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+
+.project-stack {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.project-stack span {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
+/* =========================================================================
+   Skills — DIN-rail grouped readout
+   ========================================================================= */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+
+.skill-group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1.3rem 1.4rem;
+}
+
+.skill-group h3 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.skill-group h3::before {
+  content: "";
+  width: 14px;
+  height: 1px;
+  background: var(--amber);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  font-size: 0.86rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* =========================================================================
+   Contact — terminal block
+   ========================================================================= */
+.contact-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.8rem, 4vw, 2.8rem);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.contact-copy h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+
+.contact-copy p {
+  margin-top: 0.75rem;
+  color: var(--text-dim);
+  max-width: 46ch;
+}
+
+.contact-terminals {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.contact-row .label {
+  color: var(--text-faint);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.contact-row .value { color: var(--text); }
+
+.copy-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+  flex-shrink: 0;
+}
+
+.copy-btn:hover { color: var(--teal); border-color: var(--teal); }
+
+.copy-btn.is-copied { color: var(--teal); border-color: var(--teal); }
+
+/* =========================================================================
+   Footer
+   ========================================================================= */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.6rem 0;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  letter-spacing: 0.03em;
+}
+
+.footer-row a:hover { color: var(--teal); }
+
+/* =========================================================================
+   Responsive
+   ========================================================================= */
+@media (max-width: 860px) {
+  .nameplate { grid-template-columns: 1fr; }
+  .badge-frame { order: -1; width: min(220px, 60%); }
+  .about-grid { grid-template-columns: 1fr; }
+  .contact-panel { grid-template-columns: 1fr; }
+  .project-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .nav-links {
+    position: fixed;
+    inset: 68px 0 auto 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s var(--ease);
+  }
+
+  .nav-links.is-open { max-height: 320px; }
+
+  .nav-links a {
+    padding: 1rem var(--gutter);
+    border-top: 1px solid var(--line-soft);
+    width: 100%;
+  }
+
+  .nav-toggle { display: inline-flex; }
+
+  .spec-strip { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .contact-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .copy-btn { align-self: flex-end; }
+}
